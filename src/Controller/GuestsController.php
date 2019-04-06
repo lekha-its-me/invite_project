@@ -38,19 +38,17 @@ class GuestsController extends AbstractController
         $message = (new \Swift_Message($subject))
             ->setFrom('lekha.baranov@gmail.com')
             ->setTo('lekha@ukr.net')
-//            ->setBody(
-//                $this->renderView(
-//                // templates/emails/registration.html.twig
-//                    'guests/send.html.twig',
-//                    [
-//                        'subject' => $subject,
-//                        'letterBody' => $letterBody,
-//                        'qr' =>  $request->getScheme() . '://' . $request->getHttpHost() . '/qr/123123123.png',
-//                    ]
-//                ),
-//                'text/html'
-//            )
-        ->setBody('Test')
+            ->setBody(
+                $this->renderView(
+                    'guests/send.html.twig',
+                    [
+                        'subject' => $subject,
+                        'letterBody' => $letterBody,
+                        'qr' =>  $request->getScheme() . '://' . $request->getHttpHost() . '/qr/123123123.png',
+                    ]
+                ),
+                'text/html'
+            )
         ;
 
         $result = $mailer->send($message);
