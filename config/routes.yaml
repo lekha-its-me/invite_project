@@ -1,3 +1,11 @@
 index:
     path: /
     controller: App\Controller\IndexController::index
+
+upload_index:
+    path: /upload
+    controller: App\Controller\UploadsController::index
+
+upload_getFile:
+    path: /upload/get
+    controller: App\Controller\UploadsController::getFile

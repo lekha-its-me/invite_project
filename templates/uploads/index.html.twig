@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/upload.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div id="drop_file_zone" ondrop="upload_file(event)" ondragover="return false">
+            <div id="drag_upload_file">
+                <p>Drop file here</p>
+                <p>or</p>
+                <p><input type="button" value="Select File" onclick="file_explorer();"></p>
+                <input type="file" id="selectfile">
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/upload.js') }}">
+{% endblock %}
