@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    {{ qr }}
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">{{ subject }}</h1>
+            <p class="lead">{{ letterBody }}</p>
+            <hr class="my-4">
+            <p class="lead">
+                <img src="{{ qr }}" />
+            </p>
+        </div>
+    </div>
+{% endblock %}

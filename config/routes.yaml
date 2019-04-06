@@ -9,3 +9,11 @@ upload_index:
 upload_getFile:
     path: /upload/get
     controller: App\Controller\UploadsController::getFile
+
+guests_index:
+    path: /guests/
+    controller: App\Controller\GuestsController::index
+
+guests_send:
+    path: /guests/send
+    controller: App\Controller\GuestsController::send
