@@ -4,11 +4,11 @@ namespace App\Controller;
 
 use App\Repository\GuestRepositoryInterface;
 use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Response\QrCodeResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Swift_Mailer;
 use Symfony\Component\HttpFoundation\Response;
+use App\Service\SendEmailService;
+use Swift_Mailer;
 
 
 class GuestsController extends AbstractController
@@ -25,40 +25,29 @@ class GuestsController extends AbstractController
         ]);
     }
 
-    public function send(Request $request, Swift_Mailer $mailer)
+    public function send(Request $request, SendEmailService $emailService, GuestRepositoryInterface $guestRepository, Swift_Mailer $mailer)
     {
         $recipients = $request->get('recipients');
         $subject = $request->get('subject');
         $letterBody = $request->get('letterBody');
 
-        $qr = new QrCode('http://ukr.net');
-        header('Content-Type: '.$qr->getContentType());
-        $qr->writeFile(getcwd() . '/qr/123123123.png');
+        for($i=0; $i<count($recipients); $i++)
+        {
+            $addresser = $guestRepository->find($recipients[$i]);
 
-        $message = (new \Swift_Message($subject))
-            ->setFrom('lekha.baranov@gmail.com')
-            ->setTo('lekha@ukr.net')
-            ->setBody(
-                $this->renderView(
-                    'guests/send.html.twig',
-                    [
-                        'subject' => $subject,
-                        'letterBody' => $letterBody,
-                        'qr' =>  $request->getScheme() . '://' . $request->getHttpHost() . '/qr/123123123.png',
-                    ]
-                ),
-                'text/html'
-            )
-        ;
+            $qr = new QrCode($addresser->getHash());
+            header('Content-Type: '.$qr->getContentType());
+            $qr->writeFile(getcwd() . '/qr/'.$addresser->getHash().'.png');
 
-        $result = $mailer->send($message);
+            $result = $emailService->send($subject, $addresser->getEmail(), $letterBody, $request->getScheme() . '://' . $request->getHttpHost() . '/qr/'.$addresser->getHash().'.png', $mailer);
+        }
 
-//        return $this->render('guests/send.html.twig',[
-//            'recipients' => $recipients,
-//            'subject' => $subject,
-//            'letterBody' => $letterBody,
-//            'qr' =>  $request->getScheme() . '://' . $request->getHttpHost() . '/qr/123123123.png',
-//        ]);
-        return new Response($result);
+        if (!$result)
+        {
+            return new Response('error', 400);
+        }
+
+        return new Response('ok', 200);
+
     }
 }
