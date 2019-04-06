@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Repository\GuestRepositoryInterface;
 use Endroid\QrCode\QrCode;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +35,7 @@ class GuestsController extends AbstractController
         {
             $addresser = $guestRepository->find($recipients[$i]);
 
-            $qr = new QrCode($request->getScheme() . '://' . $request->getHttpHost() . '/qr/'.$addresser->getHash().'.png');
+            $qr = new QrCode($request->getScheme() . '://' . $request->getHttpHost() . '/guest/'.$addresser->getHash());
             header('Content-Type: '.$qr->getContentType());
             $qr->writeFile(getcwd() . '/qr/'.$addresser->getHash().'.png');
             $qrPictureAddress = $request->getScheme() . '://' . $request->getHttpHost() . '/qr/'.$addresser->getHash().'.png';
@@ -50,6 +49,5 @@ class GuestsController extends AbstractController
         }
 
         return new Response('ok', 200);
-
     }
 }
