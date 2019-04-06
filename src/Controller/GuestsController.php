@@ -36,7 +36,7 @@ class GuestsController extends AbstractController
         {
             $addresser = $guestRepository->find($recipients[$i]);
 
-            $qr = new QrCode($addresser->getHash());
+            $qr = new QrCode($request->getScheme() . '://' . $request->getHttpHost() . '/qr/'.$addresser->getHash().'.png');
             header('Content-Type: '.$qr->getContentType());
             $qr->writeFile(getcwd() . '/qr/'.$addresser->getHash().'.png');
             $qrPictureAddress = $request->getScheme() . '://' . $request->getHttpHost() . '/qr/'.$addresser->getHash().'.png';
