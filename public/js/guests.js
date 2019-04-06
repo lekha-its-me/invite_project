@@ -13,15 +13,23 @@ $('#sendInvite').click(function (e) {
         $.each($("input[name='guests']:checked"), function(){
             recipients.push($(this).val());
         });
-        $.ajax({
-            type: 'POST',
-            url: '/guests/send',
-            data: 'subject=' + subject + '&letterBody=' + body + '&recipients=' + recipients,
-            success:function(response) {
-                console.log(response);
-            }
-        });
-        console.log(recipients);
+        if(recipients.length > 0){
+            $.ajax({
+                type: 'POST',
+                url: '/guests/send',
+                data: 'subject=' + subject + '&letterBody=' + body + '&recipients=' + recipients,
+                success:function(response) {
+                    if(response == 'ok'){
+                        $('#subject').val('');
+                        $('#letterBody').val('');
+                        alert('Успешно отправлено');
+                    }
+                }
+            });
+        } else {
+            alert('Выберите хотя бы одного получателя');
+        }
+
     } else {
         alert('Заполните тему и текст письма');
     }

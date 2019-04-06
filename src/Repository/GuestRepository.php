@@ -5,8 +5,10 @@ namespace App\Repository;
 use App\Entity\Guest;
 use App\Service\ReadAndSaveDataService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * @method Guest|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,45 +18,28 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
  */
 class GuestRepository extends ServiceEntityRepository implements GuestRepositoryInterface
 {
-    public function __construct(RegistryInterface $registry)
+    public function __construct(RegistryInterface $registry, ObjectManager $entityManager)
     {
         parent::__construct($registry, Guest::class);
+        $this->entityManager = $entityManager;
     }
 
-    // /**
-    //  * @return Guest[] Returns an array of Guest objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('g.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Guest
-    {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
     /**
-     * @return mixed
+     * @param $hash
+     * @return mixed|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOne()
+    public function findOneByHash(string $hash): ?Guest
     {
-
+        try {
+            return $this->createQueryBuilder('p')
+                ->where('p.hash = :hash')
+                ->setParameter('hash', $hash)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NotFoundResourceException $e) {
+            return null;
+        }
     }
 
 
@@ -62,10 +47,9 @@ class GuestRepository extends ServiceEntityRepository implements GuestRepository
     {
         try {
             return $this->createQueryBuilder('p')
-                ->where('p.is_some != :is_come')
-                ->setParameter('is_come', 'true')
-                ->getQuery()
-                ->getOneOrNullResult();
+                ->where('p.is_comes == :is_comes')
+                ->setParameter('is_comes', null)
+                ->getQuery();
         } catch (NotFoundResourceException $e) {
             return null;
         }
@@ -94,5 +78,27 @@ class GuestRepository extends ServiceEntityRepository implements GuestRepository
         {
             return new \RuntimeException('error');
         }
+    }
+
+    public function setIsComes(int $id): ?Guest
+    {
+        try {
+            $guest = $this->createQueryBuilder('p')
+                ->where('p.id = :id')
+                ->setParameter('id', $id)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NotFoundResourceException $e) {
+            return null;
+        }
+
+        if(!is_null($guest))
+        {
+            $guest->setIsComes(true);
+            $this->entityManager->persist($guest);
+            $this->entityManager->flush();
+            return $guest;
+        }
+        return null;
     }
 }

@@ -20,7 +20,7 @@ class GuestsController extends AbstractController
     }
     public function index()
     {
-        $guests = $this->guestRepository->findAll();
+        $guests = $this->guestRepository->findALl();
         return $this->render('guests/index.html.twig',[
             'guests' => $guests
         ]);
@@ -39,8 +39,9 @@ class GuestsController extends AbstractController
             $qr = new QrCode($addresser->getHash());
             header('Content-Type: '.$qr->getContentType());
             $qr->writeFile(getcwd() . '/qr/'.$addresser->getHash().'.png');
+            $qrPictureAddress = $request->getScheme() . '://' . $request->getHttpHost() . '/qr/'.$addresser->getHash().'.png';
 
-            $result = $emailService->send($subject, $addresser->getEmail(), $letterBody, $request->getScheme() . '://' . $request->getHttpHost() . '/qr/'.$addresser->getHash().'.png', $mailer);
+            $result = $emailService->send($subject, $addresser->getEmail(), $letterBody, $qrPictureAddress, $mailer);
         }
 
         if (!$result)

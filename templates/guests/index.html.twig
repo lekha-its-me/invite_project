@@ -9,6 +9,7 @@
                 <th scope="col">Имя</th>
                 <th scope="col">Фамилия</th>
                 <th scope="col">E-mail</th>
+                <th scope="col">Отметка о приходе</th>
             </tr>
             </thead>
             <tbody >
@@ -18,6 +19,7 @@
                     <td>{{ guest.firstname }}</td>
                     <td>{{ guest.lastname }}</td>
                     <td>{{ guest.email }}</td>
+                    <td>{% if guest.getIsComes == 1%} + {% else %} - {% endif %}</td>
                 </tr>
             {% endfor %}
             </tbody>
