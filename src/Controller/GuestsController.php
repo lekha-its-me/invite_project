@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\GuestRepositoryInterface;
 use Endroid\QrCode\QrCode;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +28,7 @@ class GuestsController extends AbstractController
 
     public function send(Request $request, SendEmailService $emailService, GuestRepositoryInterface $guestRepository, Swift_Mailer $mailer)
     {
-        $recipients = $request->get('recipients');
+        $recipients = explode(',', $request->get('recipients'));
         $subject = $request->get('subject');
         $letterBody = $request->get('letterBody');
 
