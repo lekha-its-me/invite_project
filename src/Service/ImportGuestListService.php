@@ -4,8 +4,9 @@ namespace App\Service;
 
 use App\Entity\Guest;
 use Doctrine\Common\Persistence\ObjectManager;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
-class ReadAndSaveDataService
+class ImportGuestListService
 {
     public function __construct(ObjectManager $entityManager)
     {
@@ -20,8 +21,7 @@ class ReadAndSaveDataService
     {
         $dataString = explode(';', $data);
         $guest = new Guest($dataString[0], $dataString[1], $dataString[2]);
-        $guest->setHash(sha1($dataString[2]));
-
+        $guest->setHash(sha1($dataString[2] . time()));
         $this->em->persist($guest);
         $this->em->flush();
 

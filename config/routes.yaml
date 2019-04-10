@@ -4,11 +4,11 @@ index:
 
 upload_index:
     path: /upload
-    controller: App\Controller\UploadsController::index
+    controller: App\Controller\GuestsImportController::index
 
 upload_getFile:
     path: /upload/get
-    controller: App\Controller\UploadsController::getFile
+    controller: App\Controller\GuestsImportController::getFile
 
 guests_index:
     path: /guests/

@@ -4,23 +4,26 @@ namespace App\Service;
 
 use Swift_Mailer;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SendEmailService implements SendEmailServiceInterface
 {
     /**
      * SendEmailService constructor.
      * @param \Twig\Environment $templating
+     * @param ParameterBagInterface $params
      */
 
-    public function __construct(\Twig\Environment $templating)
+    public function __construct(\Twig\Environment $templating, ParameterBagInterface $params)
     {
         $this->templating = $templating;
+        $this->params = $params;
     }
     public function send(string $subject, string $recipient, string $body, string $qr, Swift_Mailer $mailer)
     {
 
         $message = (new \Swift_Message($subject))
-            ->setFrom('lekha.baranov@gmail.com')
+            ->setFrom($this->params->get('app.mail_from'))
             ->setTo($recipient)
             ->setBody(
                 $this->templating->render(

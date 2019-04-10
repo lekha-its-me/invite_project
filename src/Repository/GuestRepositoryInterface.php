@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Service\ReadAndSaveDataService;
+use App\Service\ImportGuestListService;
 
 interface GuestRepositoryInterface
 {
@@ -10,5 +10,5 @@ interface GuestRepositoryInterface
 
     public function findOneByHash(string $hash);
 
-    public function addGuest(ReadAndSaveDataService $readAndSaveDataService, string $filePath);
+    public function addGuest(ImportGuestListService $readAndSaveDataService, string $filePath);
 }

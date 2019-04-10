@@ -5,18 +5,19 @@ namespace App\Controller;
 use App\Exceptions\FileUploadException;
 use App\Repository\GuestRepository;
 use App\Service\FileUploadService;
-use App\Service\ReadAndSaveDataService;
+use App\Service\ImportGuestListService;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
-class UploadsController extends AbstractController
+class GuestsImportController extends AbstractController
 {
     public function index()
     {
         return $this->render('/uploads/index.html.twig');
     }
 
-    public function getFile(ReadAndSaveDataService $readAndSaveDataService, GuestRepository $guestRepository)
+    public function getFile(ImportGuestListService $readAndSaveDataService, GuestRepository $guestRepository)
     {
         $uploader = new FileUploadService();
         try {
@@ -27,8 +28,12 @@ class UploadsController extends AbstractController
             return new Response('Ошибка при загрузке файла', 400);
         }
 
-        $response = $guestRepository->addGuest($readAndSaveDataService, $file);
+        if($response = $guestRepository->addGuest($readAndSaveDataService, $file))
+        {
+            return new Response('true', 200);
+        }
 
-        return new Response($response, 200);
+        return false;
+
     }
 }

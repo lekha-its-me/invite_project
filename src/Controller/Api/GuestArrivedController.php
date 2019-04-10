@@ -6,7 +6,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Repository\GuestRepository;
 use Symfony\Component\HttpFoundation\Response;
 
-class AccessController
+class GuestArrivedController
 {
     public function __construct(GuestRepository $guestRepository)
     {
@@ -19,10 +19,16 @@ class AccessController
     public function getGuest(string $hash): Response
     {
         $guest = $this->guestRepository->findOneByHash($hash);
+
         if(!is_null($guest))
         {
-            $this->guestRepository->setIsComes($guest->getId());
-            return new Response('Билет принят', 200);
+            if($this->guestRepository->hasArrived($guest->getId()) != null)
+            {
+                return new Response('Билет принят', 200);
+            }
+            else{
+                return new Response('По этому билету уже был вход', 404);
+            }
         }
         else
         {

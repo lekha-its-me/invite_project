@@ -19,7 +19,7 @@
                     <td>{{ guest.firstname }}</td>
                     <td>{{ guest.lastname }}</td>
                     <td>{{ guest.email }}</td>
-                    <td>{% if guest.getIsComes == 1%} + {% else %} - {% endif %}</td>
+                    <td>{% if guest.isComes %} + {% else %} - {% endif %}</td>
                 </tr>
             {% endfor %}
             </tbody>

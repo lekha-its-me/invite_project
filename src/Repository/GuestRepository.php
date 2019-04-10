@@ -3,9 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Guest;
-use App\Service\ReadAndSaveDataService;
+use App\Service\ImportGuestListService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManager;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -56,36 +57,35 @@ class GuestRepository extends ServiceEntityRepository implements GuestRepository
     }
 
     /**
-     * @param ReadAndSaveDataService $readAndSaveDataService
+     * @param ImportGuestListService $readAndSaveDataService
      * @param string $filePath
      * @return \RuntimeException
      */
-    public function addGuest(ReadAndSaveDataService $readAndSaveDataService, string $filePath)
+    public function addGuest(ImportGuestListService $readAndSaveDataService, string $filePath)
     {
         if (file_exists($filePath))
         {
-            if (($fp = fopen($filePath, "r")) !== FALSE) {
-                while (($row = fgetcsv($fp, null, ",")) !== FALSE) {
-                    for($i=0; $i<count($row);$i++)
-                    {
-                        $readAndSaveDataService->saveData($row[$i]);
-                    }
-                }
-                fclose($fp);
+            $file = new \SplFileObject($filePath);
+            $file->setFlags(\SplFileObject::READ_CSV);
+            foreach ($file as $row) {
+                $readAndSaveDataService->saveData($row[0]);
             }
         }
         else
         {
             return new \RuntimeException('error');
         }
+
+        return true;
     }
 
-    public function setIsComes(int $id): ?Guest
+    public function hasArrived(int $id): ?Guest
     {
         try {
             $guest = $this->createQueryBuilder('p')
                 ->where('p.id = :id')
                 ->setParameter('id', $id)
+                ->andWhere('p.is_comes IS NULL')
                 ->getQuery()
                 ->getOneOrNullResult();
         } catch (NotFoundResourceException $e) {
@@ -99,6 +99,7 @@ class GuestRepository extends ServiceEntityRepository implements GuestRepository
             $this->entityManager->flush();
             return $guest;
         }
+
         return null;
     }
 }

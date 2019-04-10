@@ -30,8 +30,13 @@ function ajax_file_upload(file_obj) {
             processData: false,
             data: form_data,
             success:function(response) {
-                alert(response);
                 $('#selectfile').val('');
+
+                if(response == 'true'){
+                    alert('Успешно загружено');
+                } else {
+                    alert('Ошибка при загрузке');
+                }
             }
         });
     }

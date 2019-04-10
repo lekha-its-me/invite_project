@@ -101,9 +101,9 @@ class Guest
         return $this;
     }
 
-    public function getIsComes(): ?bool
+    public function isComes(): bool
     {
-        return $this->is_comes;
+        return $this->is_comes == '1' ? true : false;
     }
 
     public function setIsComes(bool $is_comes): self
