@@ -6,6 +6,10 @@ use App\Exceptions\FileUploadException;
 
 class FileUploadService implements FileUploadsInterface
 {
+    /**
+     * @param array $files
+     * @return string
+     */
     public function upload(array $files) :string
     {
         foreach($_FILES['file']['name'] as $key=>$val){

@@ -22,18 +22,9 @@ class GuestArrivedController
 
         if(!is_null($guest))
         {
-            if($this->guestRepository->hasArrived($guest->getId()) != null)
-            {
-                return new Response('Билет принят', 200);
-            }
-            else{
-                return new Response('По этому билету уже был вход', 404);
-            }
-        }
-        else
-        {
-            return new Response('Неверный билет', 400);
+            return $this->guestRepository->save($guest);
         }
 
+        return new Response('Неверный билет', 400);
     }
 }

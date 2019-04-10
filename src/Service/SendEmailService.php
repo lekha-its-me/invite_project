@@ -19,6 +19,18 @@ class SendEmailService implements SendEmailServiceInterface
         $this->templating = $templating;
         $this->params = $params;
     }
+
+    /**
+     * @param string $subject
+     * @param string $recipient
+     * @param string $body
+     * @param string $qr
+     * @param Swift_Mailer $mailer
+     * @return int
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
     public function send(string $subject, string $recipient, string $body, string $qr, Swift_Mailer $mailer)
     {
 

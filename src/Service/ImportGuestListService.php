@@ -4,9 +4,8 @@ namespace App\Service;
 
 use App\Entity\Guest;
 use Doctrine\Common\Persistence\ObjectManager;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
-class ImportGuestListService
+class ImportGuestListService implements ImportGuestListServiceInterface
 {
     public function __construct(ObjectManager $entityManager)
     {

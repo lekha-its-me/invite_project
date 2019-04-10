@@ -3,10 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Guest;
-use App\Service\ImportGuestListService;
+use App\Service\ImportGuestListServiceInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManager;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -44,6 +44,9 @@ class GuestRepository extends ServiceEntityRepository implements GuestRepository
     }
 
 
+    /**
+     * @return \Doctrine\ORM\Query|null
+     */
     public function findAllNotComes()
     {
         try {
@@ -57,18 +60,18 @@ class GuestRepository extends ServiceEntityRepository implements GuestRepository
     }
 
     /**
-     * @param ImportGuestListService $readAndSaveDataService
+     * @param ImportGuestListServiceInterface $importGuestListService
      * @param string $filePath
-     * @return \RuntimeException
+     * @return bool|\RuntimeException
      */
-    public function addGuest(ImportGuestListService $readAndSaveDataService, string $filePath)
+    public function addGuest(ImportGuestListServiceInterface $importGuestListService, string $filePath)
     {
         if (file_exists($filePath))
         {
             $file = new \SplFileObject($filePath);
             $file->setFlags(\SplFileObject::READ_CSV);
             foreach ($file as $row) {
-                $readAndSaveDataService->saveData($row[0]);
+                $importGuestListService->saveData($row[0]);
             }
         }
         else
@@ -79,27 +82,38 @@ class GuestRepository extends ServiceEntityRepository implements GuestRepository
         return true;
     }
 
-    public function hasArrived(int $id): ?Guest
+    /**
+     * @param Guest $guest
+     * @return Guest|null
+     */
+    public function hasArrived(Guest $guest): ?Guest
     {
-        try {
-            $guest = $this->createQueryBuilder('p')
-                ->where('p.id = :id')
-                ->setParameter('id', $id)
-                ->andWhere('p.is_comes IS NULL')
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NotFoundResourceException $e) {
-            return null;
-        }
-
-        if(!is_null($guest))
+        if(!$guest->isComes())
         {
-            $guest->setIsComes(true);
-            $this->entityManager->persist($guest);
-            $this->entityManager->flush();
-            return $guest;
+            if(!is_null($guest))
+            {
+                $guest->setIsComes(true);
+                $this->entityManager->persist($guest);
+                $this->entityManager->flush();
+                return $guest;
+            }
         }
 
         return null;
+    }
+
+    /**
+     * @param Guest $guest
+     * @return Response
+     */
+    public function save(Guest $guest)
+    {
+        if($this->hasArrived($guest) != null)
+        {
+            return new Response('Билет принят', 200);
+        }
+        else{
+            return new Response('По этому билету уже был вход', 404);
+        }
     }
 }

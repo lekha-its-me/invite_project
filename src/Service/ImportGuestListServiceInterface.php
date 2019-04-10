@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-interface ReadAndSaveFileDataInterface
+interface ImportGuestListServiceInterface
 {
     public function saveData(string $data);
 }

@@ -20,9 +20,9 @@
         <div class="bg-light border-right" id="sidebar-wrapper">
             <div class="sidebar-heading">Invite Manager </div>
             <div class="list-group list-group-flush">
-                <a href="/" class="list-group-item list-group-item-action bg-light">Главная</a>
-                <a href="/upload" class="list-group-item list-group-item-action bg-light">Загрузка пользователей</a>
-                <a href="/guests" class="list-group-item list-group-item-action bg-light">Список гостей</a>
+                <a href="{{ path('index') }}" class="list-group-item list-group-item-action bg-light">Главная</a>
+                <a href="{{ path('upload_index') }}" class="list-group-item list-group-item-action bg-light">Загрузка пользователей</a>
+                <a href="{{ path('guests_index') }}" class="list-group-item list-group-item-action bg-light">Список гостей</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->

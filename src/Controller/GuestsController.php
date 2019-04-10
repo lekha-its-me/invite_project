@@ -17,6 +17,10 @@ class GuestsController extends AbstractController
     {
         $this->guestRepository = $guestRepository;
     }
+
+    /**
+     * @return Response
+     */
     public function index()
     {
         $guests = $this->guestRepository->findALl();
@@ -25,6 +29,13 @@ class GuestsController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param SendEmailService $emailService
+     * @param GuestRepositoryInterface $guestRepository
+     * @param Swift_Mailer $mailer
+     * @return Response
+     */
     public function send(Request $request, SendEmailService $emailService, GuestRepositoryInterface $guestRepository, Swift_Mailer $mailer)
     {
         $recipients = explode(',', $request->get('recipients'));
